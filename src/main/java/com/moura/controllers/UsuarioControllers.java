@@ -3,55 +3,80 @@ package com.moura.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.moura.UsuarioServices;
 import com.moura.model.Usuario;
+import com.moura.services.UsuarioServices;
 
 @RestController
 @RequestMapping("/usuario")
 public class UsuarioControllers {
 
-	@Autowired
+	
 	/*
 	 * OBS: com a anotation "@Autowired" o spring vai injetar a instancia da classe
 	 * "UsuarioService" sem a necessidade de usar o "new UsuarioServices();" desta
 	 * forma: "private UsuarioServices usuarioService = new UsuarioServices();"
 	 */
-	private UsuarioServices usuarioService;
+	@Autowired
+	UsuarioServices usuarioService;
 
 	// http://localhost:8080/usuario
-	@RequestMapping()
+	@GetMapping()
 	public List<Usuario> findAll() {
 		return usuarioService.findAll();
 	}
 
 	// http://localhost:8080/1
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Usuario findById(@PathVariable("id") String id) {
+	@GetMapping("/{id}")
+	public Usuario findById(@PathVariable("id") Long id) {
 		return usuarioService.findById(id);
 	}
 
 	// CREATE
-	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED) //retorna o "201 CREATED", padrão REST.
 	public Usuario create(@RequestBody Usuario usuario) {
 		return usuarioService.create(usuario);
 	}
 
 	// UPDATE
-	@RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Usuario update(@RequestBody Usuario usuario) {
+	@PutMapping("/{id}")
+	public Usuario update(@PathVariable Long id, @RequestBody Usuario usuario) {
 		return usuarioService.update(usuario);
 	}
 
-	//DELETE
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id") String id) {
+	//DELETE retorna 204 No Content (Forma correta para o DELETE)
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		usuarioService.delete(id);
+		return ResponseEntity.noContent().build();
 	}
+		
+//DELETE retorna 200 (não é o ideal)
+//@DeleteMapping("/{id}")
+//public void delete(@PathVariable Long id) {
+//	usuarioService.delete(id);
+//}
+	
+	
+/*
+Diferença entre as principais anotações
+Anotação:		Para que serve:
+@RequestBody	Dados do body (JSON)
+@PathVariable	Dados da URL (/usuarios/10)
+@RequestParam	Dados da query string (?page=1
+ */
+
 }
+

@@ -3,16 +3,34 @@ package com.moura.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name="usuario")
 public class Usuario implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@Column(name = "Nome", nullable = false, length = 80)
 	private String nome;
+	@Column(name = "Idade", nullable = false)
 	private int idade;
-	private double altura;
-	private double peso;
-	private double imc;
+	@Column(name = "Altura", nullable =false)
+	private Double altura;
+	@Column(name = "Peso", nullable = false)
+	private Double peso;
+	@Column(name = "IMC", nullable = false)
+	private Double imc;
+	@Column(name = "Classificação IMC")
 	private String classificaçao;
 	
 	
@@ -25,6 +43,7 @@ public class Usuario implements Serializable{
 		this.nome = nome;
 		this.idade = idade;
 		this.altura = altura;
+		
 		this.peso = peso;
 		this.imc = imc;
 		this.classificaçao = classificaçao;

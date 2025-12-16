@@ -26,13 +26,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler(ParametroInvalidoException.class) //ERRO 400 -> o usuário enviou algo errado na requisição. exemplo: altura não enviada.
-	public final ResponseEntity<ExceptionResponse> handlerBadRequestExceptions(ParametroInvalidoException ex,
+	public final ResponseEntity<ExceptionResponse> handlerNotfoundExceptions(ParametroInvalidoException ex,
 			WebRequest request) {
 		ExceptionResponse response = new ExceptionResponse(
 				LocalDateTime.now(), 
 				ex.getMessage(),
 				request.getDescription(false));
-		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 
 	}
 }
