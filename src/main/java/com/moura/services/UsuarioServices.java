@@ -26,26 +26,25 @@ public class UsuarioServices {
 	 */
 
 	public List<Usuario> findAll() {
-		logger.info("Varios usuarios!");
+		logger.info("Lista de Usuarios");
 		return repository.findAll();
 	}
 
 	public Usuario findById(Long id) {
-		logger.info("Encontrando um usuario!");
+		logger.info("Usuario encontrado pelo ID " + id);
 		return repository.findById(id)
 				.orElseThrow(() -> new ParametroInvalidoException("Nenhum registro encotrando para este ID"));
 	}
 
 	public Usuario create(Usuario usuario) {
-		logger.info("Criando um usuario!");
-		double imc = calculoImc(usuario);
-		usuario.setImc(imc);
-		usuario.setClassificaçao(classificarImc(imc));
+		logger.info("Novo Usuario criado!");
+		
+		usuario.calculoImc();
 		return repository.save(usuario);
 	}
 
 	public Usuario update(Usuario usuario) {
-		logger.info("Atualizando usuario!");
+		logger.info("Usuario atualizado!");
 
 		Usuario entidade = repository.findById(usuario.getId())
 				.orElseThrow(() -> new ParametroInvalidoException("Nenhum registro encontrado para este ID"));
@@ -54,10 +53,7 @@ public class UsuarioServices {
 		entidade.setIdade(usuario.getIdade());
 		entidade.setAltura(usuario.getAltura());
 		entidade.setPeso(usuario.getPeso());
-
-		double imc = calculoImc(entidade);
-		entidade.setImc(imc);
-		entidade.setClassificaçao(classificarImc(imc));
+		entidade.calculoImc();
 
 		return repository.save(entidade);
 	}
@@ -72,29 +68,4 @@ public class UsuarioServices {
 
 	}
 
-	private double calculoImc(Usuario dados) {
-		if(dados.getPeso() <= 0.0 || dados.getAltura() <= 0.0) {
-			throw new ParametroInvalidoException("Peso e altura devem ser informados!");
-		}
-		Double calculo = dados.getPeso() / Math.pow(dados.getAltura(), 2);
-		Double imc = Math.round(calculo * 100.0) / 100.0;
-		return imc;
-	}
-
-	private String classificarImc(double imc) {
-
-		if (imc < 18.5) {
-			return "Magreza";
-		} else if (imc < 25) {
-			return "Peso normal";
-		} else if (imc < 30) {
-			return "Sobrepeso";
-		} else if (imc < 35) {
-			return "Obesidade grau I";
-		} else if (imc < 40) {
-			return "Obesidade grau II";
-		} else {
-			return "Obesidade grau III";
-		}
-	}
 }

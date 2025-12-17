@@ -3,6 +3,8 @@ package com.moura.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.moura.exception.ParametroInvalidoException;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,10 +32,37 @@ public class Usuario implements Serializable{
 	private Double peso;
 	@Column(name = "IMC", nullable = false)
 	private Double imc;
-	@Column(name = "Classificação IMC")
+	@Column(name = "Classificacao_IMC")
 	private String classificaçao;
 	
 	
+	public void calculoImc() {
+		if (peso <= 0.0 || altura <= 0.0) {
+			throw new ParametroInvalidoException("Peso e altura devem ser informados!");
+		}
+		Double calculo = peso / Math.pow(altura, 2);
+		this.imc = Math.round(calculo * 100.0) / 100.0;
+		this.classificaçao = classificarImc(this.imc);
+	
+	}
+
+	private String classificarImc(double imc) {
+
+		if (imc < 18.5) {
+			return "Magreza";
+		} else if (imc < 25) {
+			return "Peso normal";
+		} else if (imc < 30) {
+			return "Sobrepeso";
+		} else if (imc < 35) {
+			return "Obesidade grau I";
+		} else if (imc < 40) {
+			return "Obesidade grau II";
+		} else {
+			return "Obesidade grau III";
+		}
+	}
+
 	public Usuario() {
 	}
 
@@ -53,8 +82,6 @@ public class Usuario implements Serializable{
 	public Long getId() {
 		return id;
 	}
-
-
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -63,8 +90,6 @@ public class Usuario implements Serializable{
 	public String getNome() {
 		return nome;
 	}
-
-
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
@@ -73,8 +98,6 @@ public class Usuario implements Serializable{
 	public int getIdade() {
 		return idade;
 	}
-
-
 	public void setIdade(int idade) {
 		this.idade = idade;
 	}
@@ -83,8 +106,6 @@ public class Usuario implements Serializable{
 	public double getAltura() {
 		return altura;
 	}
-
-
 	public void setAltura(double altura) {
 		this.altura = altura;
 	}
@@ -93,8 +114,6 @@ public class Usuario implements Serializable{
 	public double getPeso() {
 		return peso;
 	}
-
-
 	public void setPeso(double peso) {
 		this.peso = peso;
 	}
@@ -103,8 +122,6 @@ public class Usuario implements Serializable{
 	public double getImc() {
 		return imc;
 	}
-
-
 	public void setImc(double imc) {
 		this.imc = imc;
 	}
@@ -113,8 +130,6 @@ public class Usuario implements Serializable{
 	public String getClassificaçao() {
 		return classificaçao;
 	}
-
-
 	public void setClassificaçao(String classificaçao) {
 		this.classificaçao = classificaçao;
 	}
