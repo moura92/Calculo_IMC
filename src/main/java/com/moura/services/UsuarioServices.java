@@ -6,7 +6,9 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.moura.dto.UsuarioDTO;
 import com.moura.exception.ParametroInvalidoException;
+import com.moura.mapper.UsuarioMapper;
 import com.moura.model.Usuario;
 import com.moura.repository.UsuarioRepository;
 
@@ -15,6 +17,8 @@ public class UsuarioServices {
 
 	@Autowired
 	UsuarioRepository repository;
+	@Autowired
+	UsuarioMapper usuarioMapper;
 
 	private Logger logger = Logger.getLogger(UsuarioServices.class.getName());
 	/*
@@ -25,37 +29,43 @@ public class UsuarioServices {
 	 * substituindo System.out.println, com níveis, filtros e arquivos de log.
 	 */
 
-	public List<Usuario> findAll() {
+	public List<UsuarioDTO> findAll() {
 		logger.info("Lista de Usuarios");
-		return repository.findAll();
+
+		return repository.findAll().stream().map(usuarioMapper::toDTO).toList();
 	}
 
-	public Usuario findById(Long id) {
+	public UsuarioDTO findById(Long id) {
 		logger.info("Usuario encontrado pelo ID " + id);
-		return repository.findById(id)
+		Usuario usuario = repository.findById(id)
 				.orElseThrow(() -> new ParametroInvalidoException("Nenhum registro encotrando para este ID"));
+		return usuarioMapper.toDTO(usuario);
 	}
 
-	public Usuario create(Usuario usuario) {
+	public UsuarioDTO create(UsuarioDTO usuarioDTO) {
 		logger.info("Novo Usuario criado!");
-		
+
+		Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
+
 		usuario.calculoImc();
-		return repository.save(usuario);
+
+		Usuario salvo = repository.save(usuario);
+		return usuarioMapper.toDTO(salvo);
 	}
 
-	public Usuario update(Usuario usuario) {
+	public UsuarioDTO update(UsuarioDTO usuarioDTO) {
 		logger.info("Usuario atualizado!");
 
-		Usuario entidade = repository.findById(usuario.getId())
+		Usuario entidade = repository.findById(usuarioDTO.getId())
 				.orElseThrow(() -> new ParametroInvalidoException("Nenhum registro encontrado para este ID"));
 
-		entidade.setNome(usuario.getNome());
-		entidade.setIdade(usuario.getIdade());
-		entidade.setAltura(usuario.getAltura());
-		entidade.setPeso(usuario.getPeso());
+		entidade.setNome(usuarioDTO.getNome());
+		entidade.setIdade(usuarioDTO.getIdade());
+		entidade.setAltura(usuarioDTO.getAltura());
+		entidade.setPeso(usuarioDTO.getPeso());
 		entidade.calculoImc();
 
-		return repository.save(entidade);
+		return usuarioMapper.toDTO(repository.save(entidade));
 	}
 
 	public void delete(Long id) {
