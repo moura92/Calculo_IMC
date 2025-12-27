@@ -5,6 +5,8 @@ import org.mapstruct.Mapper;
 import com.moura.dto.UsuarioDTO;
 import com.moura.model.Usuario;
 
+import java.util.List;
+
 
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
@@ -14,6 +16,12 @@ public interface UsuarioMapper {
 	
 	//Usuario -> DTO
 	UsuarioDTO toDTO(Usuario usuario);
+
+    // List<Entity> -> List<DTO>
+    List<UsuarioDTO> toDTOList(List<Usuario> entities);
+
+    // List<DTO> -> List<Entity>
+    List<Usuario> toEntityList(List<UsuarioDTO> dtos);
 }
 
 /*
