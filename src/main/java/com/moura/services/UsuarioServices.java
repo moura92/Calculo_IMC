@@ -3,8 +3,11 @@ package com.moura.services;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.moura.controllers.UsuarioControllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import com.moura.dto.UsuarioDTO;
 import com.moura.exception.ParametroInvalidoException;
@@ -32,17 +35,21 @@ public class UsuarioServices {
 	public List<UsuarioDTO> findAll() {
 		logger.info("Lista de Usuarios");
 
-		return repository.findAll().stream().map(usuarioMapper::toDTO).toList();
+		var usuarios =  repository.findAll().stream().map(usuarioMapper::toDTO).toList();
+        usuarios.forEach(this::addHateoasLinks);
+        return usuarios;
 	}
 
 	public UsuarioDTO findById(Long id) {
 		logger.info("Usuario encontrado pelo ID " + id);
 		Usuario usuario = repository.findById(id)
 				.orElseThrow(() -> new ParametroInvalidoException("Nenhum registro encotrando para este ID"));
-		return usuarioMapper.toDTO(usuario);
+		var dto = usuarioMapper.toDTO(usuario);
+        addHateoasLinks(dto);
+        return dto;
 	}
 
-	public UsuarioDTO create(UsuarioDTO usuarioDTO) {
+    public UsuarioDTO create(UsuarioDTO usuarioDTO) {
 		logger.info("Novo Usuario criado!");
 
 		Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
@@ -50,7 +57,9 @@ public class UsuarioServices {
 		usuario.calculoImc();
 
 		Usuario salvo = repository.save(usuario);
-		return usuarioMapper.toDTO(salvo);
+		var dto = usuarioMapper.toDTO(salvo);
+        addHateoasLinks(dto);
+        return dto;
 	}
 
 	public UsuarioDTO update(UsuarioDTO usuarioDTO) {
@@ -65,7 +74,9 @@ public class UsuarioServices {
 		entidade.setPeso(usuarioDTO.getPeso());
 		entidade.calculoImc();
 
-		return usuarioMapper.toDTO(repository.save(entidade));
+		var dto = usuarioMapper.toDTO(repository.save(entidade));
+        addHateoasLinks(dto);
+        return dto;
 	}
 
 	public void delete(Long id) {
@@ -77,5 +88,11 @@ public class UsuarioServices {
 		repository.delete(entidade);
 
 	}
-
+    private void addHateoasLinks(UsuarioDTO dto) {
+        dto.add(linkTo(methodOn(UsuarioControllers.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(UsuarioControllers.class).findById(dto.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(UsuarioControllers.class).create(dto)).withRel("create").withType("POST"));
+        dto.add(linkTo(methodOn(UsuarioControllers.class).update(dto.getId(), dto)).withRel("update").withType("PUT"));
+        dto.add(linkTo(methodOn(UsuarioControllers.class).delete(dto.getId())).withRel("detele").withType("DELETE"));
+    }
 }
