@@ -1,62 +1,156 @@
-📘 Cálculo de IMC – Spring Boot
+# 🧮 API REST para Cálculo de IMC
 
-Aplicação REST API em Spring Boot para calcular o IMC (Índice de Massa Corporal) a partir do peso e da altura informados.
-O sistema também retorna um identificador incremental e organiza os dados em um objeto DTO.
+API REST desenvolvida em **Spring Boot** para cadastro de usuários e cálculo do **Índice de Massa Corporal (IMC)**, retornando a classificação conforme padrões da OMS.
 
-📌 Funcionalidade Principal
+Projeto criado com foco em **boas práticas**, **arquitetura REST**, **documentação OpenAPI/Swagger** e **organização de código**.
 
-O endpoint /dados recebe:
-peso (kg)
-altura (m)
+---
 
-E retorna:
-ID
-altura
-peso
-imc (com duas casas decimais)
+## 🚀 Tecnologias utilizadas
 
-📐 Cálculo do IMC
+- Java 25
+- Spring Boot 3.5.9
+- Spring Web (MVC)
+- Spring Data JPA
+- Spring HATEOAS
+- MySQL
+- Flyway
+- MapStruct
+- SpringDoc OpenAPI (Swagger)
+- Maven
 
-A fórmula utilizada é:
-IMC = peso / (altura * altura)
+---
 
-Exemplo:
-peso = 78
+## 📐 Arquitetura
 
-altura = 1.72
+- Padrão **MVC**
+- API RESTful
+- Separação de responsabilidades
+- DTOs para entrada e saída
+- Versionamento de API
+- Content Negotiation (JSON / XML)
 
-IMC = 26.38
+---
 
-🚀 Endpoint
-GET /dados
+## 📊 Regra de negócio – IMC
 
-Exemplo de requisição:
-http://localhost:8080/dados?peso=78&altura=1.72
+O cálculo do IMC é feito pela fórmula:
 
-Resposta JSON:
-{
-  "id": 1,
-  
-  "altura": 1.72,
-  
-  "peso": 78.0,
-  
-  "imc": 26.38
-}
-
-🛠️ Tecnologias Utilizadas:
-Java 17+
-
-Spring Boot 3+
-
-Spring Web
-
-Maven
+IMC = peso / (altura × altura)
 
 
-🙋‍♂️ Autor
-Alisson Moura
+Classificação:
+- Abaixo de 18.5 → Magreza
+- 18.5 a 24.9 → Normal
+- 25 a 29.9 → Sobrepeso
+- 30 ou mais → Obesidade
 
-Desenvolvedor Java • Spring Boot • APIs REST
+---
 
-🔗 GitHub: https://github.com/moura92
+## 📡 Endpoints principais
+
+| Método | Endpoint        | Descrição                         |
+|------|-----------------|----------------------------------|
+| POST | `/api/v1/users` | Cadastra um usuário e calcula IMC |
+| GET  | `/api/v1/users` | Lista usuários cadastrados        |
+| GET  | `/api/v1/users/{id}` | Busca usuário por ID         |
+| PUT  | `/api/v1/users/{id}}` | Atualiza os dados do usuário e recalcula o IMC  |
+| DELETE  | `/api/v1/users/{id}` | Remove um usuário pelo ID         |
+
+
+---
+
+## 📑 Documentação da API (Swagger)
+
+Após subir a aplicação, acesse:
+http://localhost:8080/swagger-ui.html
+
+
+---
+
+## ▶️ Como executar o projeto
+
+### Pré-requisitos
+- Java 25
+- Maven
+- MySQL
+---
+### Passos
+git clone https://github.com/moura92/Calculo_IMC.git
+
+cd Calculo_IMC
+mvn spring-boot:run
+
+## ⚙️ Configuração da aplicação
+
+As configurações do projeto estão no arquivo: src/main/resources/application.properties
+
+spring.application.name=calculimc
+
+
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.datasource.url=jdbc:mysql://localhost:3306/calculoimc?useTimezone=true&serverTimezone=UTC
+
+spring.datasource.username=root
+
+spring.datasource.password=senha_exemplo
+
+
+## JPA / Hibernate
+
+spring.jpa.hibernate.ddl-auto=none
+
+spring.jpa.show-sql=true
+
+spring.jpa.open-in-view=false
+
+spring.jpa.defer-datasource-initialization=false
+
+
+
+## Flyway (Migrations)
+
+spring.flyway.enabled=false
+
+spring.flyway.locations=classpath:db/migration
+
+
+Para habilitar o Flyway:
+
+spring.flyway.enabled=true
+
+
+## 🪵 Logs da aplicação
+
+logging.level.root=warn
+
+logging.level.com.moura=INFO
+
+---
+## ▶️ Executar a aplicação
+
+mvn spring-boot:run
+
+---
+## 📑 Swagger / OpenAPI
+
+A documentação da API é gerada automaticamente pelo **SpringDoc OpenAPI**.
+
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- OpenAPI JSON: http://localhost:8080/v3/api-docs
+
+
+---
+## 📌 Licença
+
+Este projeto está sob a licença MIT License, permitindo uso, estudo e modificação.
+
+---
+## 👨‍💻 Autor
+
+Alisson de Moura
+
+GitHub: https://github.com/moura92
+
+LinkedIn: https://www.linkedin.com/in/alisson-moura-071410238/

@@ -3,6 +3,7 @@ package com.moura.controllers;
 import java.util.Date;
 import java.util.List;
 
+import com.moura.controllers.docs.UsuarioControllersDocs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,8 +22,8 @@ import com.moura.dto.UsuarioDTO;
 import com.moura.services.UsuarioServices;
 
 @RestController
-@RequestMapping("/usuario")
-public class UsuarioControllers {
+@RequestMapping("/api/v1/usuario")
+public class UsuarioControllers implements UsuarioControllersDocs {
 
 	/*
 	 * OBS: com a anotation "@Autowired" o spring vai injetar a instancia da classe
@@ -34,14 +35,16 @@ public class UsuarioControllers {
 
 	// http://localhost:8080/usuario
 	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@Override
 	public List<UsuarioDTO> findAll() {
 		return usuarioService.findAll();
 	}
 
 	// http://localhost:8080/1
 	@GetMapping(
-            value = "/{id}",
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+			value = "/{id}",
+			produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@Override
 	public UsuarioDTO findById(@PathVariable("id") Long id) {
         var usuario = usuarioService.findById(id);
         usuario.setData(new Date());
@@ -50,15 +53,17 @@ public class UsuarioControllers {
 
 	// CREATE
 	@PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-	@ResponseStatus(HttpStatus.CREATED) // retorna o "201 CREATED", padrão REST.
+	@ResponseStatus(HttpStatus.CREATED)
+	@Override
 	public UsuarioDTO create(@RequestBody UsuarioDTO usuario) {
 		return usuarioService.create(usuario);
 	}
 
 	// UPDATE
 	@PutMapping(
-            value = "/{id}",
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+			value = "/{id}",
+			produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@Override
 	public UsuarioDTO update(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
 		usuarioDTO.setId(id);
 		return usuarioService.update(usuarioDTO);
@@ -66,6 +71,7 @@ public class UsuarioControllers {
 
 	// DELETE retorna 204 No Content (Forma correta para o DELETE)
 	@DeleteMapping("/{id}")
+	@Override
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
 		usuarioService.delete(id);
 		return ResponseEntity.noContent().build();
