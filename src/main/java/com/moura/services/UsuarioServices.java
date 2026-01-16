@@ -1,19 +1,20 @@
 package com.moura.services;
 
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.moura.controllers.UsuarioControllers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import com.moura.dto.UsuarioDTO;
+import com.moura.exception.ObjetoNuloException;
 import com.moura.exception.ParametroInvalidoException;
 import com.moura.mapper.UsuarioMapper;
 import com.moura.model.Usuario;
 import com.moura.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.logging.Logger;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class UsuarioServices {
@@ -33,9 +34,12 @@ public class UsuarioServices {
 	 */
 
 	public List<UsuarioDTO> findAll() {
-		logger.info("Lista de Usuarios");
+		logger.info("Buscando Lista de Usuarios");
 
-		var usuarios =  repository.findAll().stream().map(usuarioMapper::toDTO).toList();
+		var usuarios =  repository.findAll()
+                .stream()
+                .map(usuarioMapper::toDTO)
+                .toList();
         usuarios.forEach(this::addHateoasLinks);
         return usuarios;
 	}
@@ -50,7 +54,10 @@ public class UsuarioServices {
 	}
 
     public UsuarioDTO create(UsuarioDTO usuarioDTO) {
-		logger.info("Novo Usuario criado!");
+
+        if (usuarioDTO == null) throw new ObjetoNuloException();
+
+        logger.info("Novo Usuario criado!");
 
 		Usuario usuario = usuarioMapper.toEntity(usuarioDTO);
 
@@ -63,7 +70,10 @@ public class UsuarioServices {
 	}
 
 	public UsuarioDTO update(UsuarioDTO usuarioDTO) {
-		logger.info("Usuario atualizado!");
+
+        if (usuarioDTO == null) throw new ObjetoNuloException();
+
+        logger.info("Usuario atualizado!");
 
 		Usuario entidade = repository.findById(usuarioDTO.getId())
 				.orElseThrow(() -> new ParametroInvalidoException("Nenhum registro encontrado para este ID"));

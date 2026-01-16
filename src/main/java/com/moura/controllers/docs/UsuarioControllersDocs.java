@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@Tag(name = "Usuario Controllers")
+
+//Documentar SWAGGER
+@Tag(name = "Usuario")
 public interface UsuarioControllersDocs {
     // http://localhost:8080/api/v1/usuario
     @Operation(summary = "Lista de Usuarios"
@@ -21,7 +23,7 @@ public interface UsuarioControllersDocs {
     List<UsuarioDTO> findAll();
 
     // http://localhost:8080/api/v1/usuario/1
-    @Operation(summary = "Encontrar Usuario pelo ID"
+    @Operation(summary = "Encontre um Usuario pelo ID"
                 ,description = "Digite o ID do usuario que deseja encotra-lo")
     UsuarioDTO findById(@PathVariable("id") Long id);
 
@@ -32,13 +34,13 @@ public interface UsuarioControllersDocs {
 
     // UPDATE
     @Operation(
-            summary = "Atualizar um usuario"
-            ,description = "Atualize os dados de um usuario pelo ID ja cadastrado")
+            summary = "Atualiza"
+            ,description = "Atualize os dados de um usuario pelo ID correspondente")
     UsuarioDTO update(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO);
 
     // DELETE retorna 204 No Content (Forma correta para o DELETE)
     @Operation(
-            summary = "Delete um Usuario"
-            ,description = "Delete um usuario pelo ID correspondente")
+            summary = "Deletar"
+            ,description = "ATENÇÃO! esta ação apaga um usuario para sempre no banco de dados")
     ResponseEntity<Void> delete(@PathVariable Long id);
 }

@@ -22,7 +22,7 @@ import com.moura.dto.UsuarioDTO;
 import com.moura.services.UsuarioServices;
 
 @RestController
-@RequestMapping("/api/v1/usuario")
+@RequestMapping("/api/usuario/v1")
 public class UsuarioControllers implements UsuarioControllersDocs {
 
 	/*
@@ -33,14 +33,14 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 	@Autowired
 	UsuarioServices usuarioService;
 
-	// http://localhost:8080/usuario
+	// http://localhost:8080/api/v1/usuario
 	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@Override
 	public List<UsuarioDTO> findAll() {
 		return usuarioService.findAll();
 	}
 
-	// http://localhost:8080/1
+	// http://localhost:8080/api/v1/usuario/1
 	@GetMapping(
 			value = "/{id}",
 			produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -60,9 +60,7 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 	}
 
 	// UPDATE
-	@PutMapping(
-			value = "/{id}",
-			produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@PutMapping(value = "/{id}",produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@Override
 	public UsuarioDTO update(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO) {
 		usuarioDTO.setId(id);

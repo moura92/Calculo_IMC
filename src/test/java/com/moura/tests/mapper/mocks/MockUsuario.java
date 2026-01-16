@@ -12,7 +12,7 @@ public class MockUsuario {
         return mockEntity(0);
     }
 
-    public UsuarioDTO mockDTO() {
+    public UsuarioDTO mockDTO(){
         return mockDTO(0);
     }
 
@@ -32,7 +32,7 @@ public class MockUsuario {
         return usuarios;
     }
 
-    private Usuario mockEntity(int number) {
+    public Usuario mockEntity(int number) {
         Usuario usuario = new Usuario();
         usuario.setId((long) number);
         usuario.setNome("Usuario Teste " + number);
@@ -41,10 +41,11 @@ public class MockUsuario {
         return usuario;
     }
 
-    private UsuarioDTO mockDTO(int number) {
+    public UsuarioDTO mockDTO(int number) {
         UsuarioDTO usuario = new UsuarioDTO();
         usuario.setId((long) number);
         usuario.setNome("Usuario Teste " + number);
+        usuario.setIdade(33 + number);
         usuario.setPeso(70.0 + number);
         usuario.setAltura(1.70 + (number * 0.01));
         return usuario;
