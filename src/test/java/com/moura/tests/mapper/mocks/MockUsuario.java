@@ -36,6 +36,7 @@ public class MockUsuario {
         Usuario usuario = new Usuario();
         usuario.setId((long) number);
         usuario.setNome("Usuario Teste " + number);
+        usuario.setIdade(33+ number);
         usuario.setPeso(70.0 + number);
         usuario.setAltura(1.70 + (number * 0.01));
         return usuario;
