@@ -68,7 +68,7 @@ O cálculo do IMC é feito pela fórmula:
 ---
 
 ## 📡 Endpoints principais
-
+### Usuario
 | Método | Endpoint                | Descrição                         |
 |------|-------------------------|----------------------------------|
 | POST | `/api/usuario/v1`       | Cadastra um usuário e calcula IMC |
@@ -77,9 +77,15 @@ O cálculo do IMC é feito pela fórmula:
 | PUT  | `/api/usuario/v1/{id}}` | Atualiza os dados do usuário e recalcula o IMC  |
 | DELETE  | `/api/usuario/v1/{id}`  | Remove um usuário pelo ID         |
 
+### Book
+| Método | Endpoint         | Descrição     |
+| ------ |------------------| ------------- |
+| POST   | `/books`         | Criar livro   |
+| GET    | `/books/v1/{id}` | Buscar por ID |
+| PUT    | `/books/v1/{id}` | Atualizar     |
+| DELETE | `/books/v1/{id}` | Deletar       |
 
 ---
-
 ## 📑 Documentação da API (Swagger)
 
 Após subir a aplicação, acesse:  
@@ -121,7 +127,7 @@ Os testes validam:
 Os repositórios são **mockados**, evitando dependência de banco de dados nos testes unitários.
 
 ### Executar os testes:
-```bahs
+```bash
 mvn test
 ```
 # ⚙️ Configuração da aplicação
@@ -160,6 +166,7 @@ Este projeto está sob a licença **MIT License**, permitindo uso, estudo e modi
 ## 👨‍💻 Autor
 
 ### Alisson de Moura
+Estudante de backend Java ☕
 
 - GitHub: https://github.com/moura92
 
