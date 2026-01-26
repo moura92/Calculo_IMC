@@ -33,14 +33,14 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 	@Autowired
 	UsuarioServices usuarioService;
 
-	// http://localhost:8080/api/v1/usuario
+	// http://localhost:8080/api/usuario/v1
 	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@Override
 	public List<UsuarioDTO> findAll() {
 		return usuarioService.findAll();
 	}
 
-	// http://localhost:8080/api/v1/usuario/1
+	// http://localhost:8080/api/usuario/v1/1
 	@GetMapping(
 			value = "/{id}",
 			produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})

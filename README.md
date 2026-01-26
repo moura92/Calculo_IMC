@@ -78,12 +78,12 @@ O cálculo do IMC é feito pela fórmula:
 | DELETE  | `/api/usuario/v1/{id}`  | Remove um usuário pelo ID         |
 
 ### Book
-| Método | Endpoint         | Descrição     |
-| ------ |------------------| ------------- |
-| POST   | `/books`         | Criar livro   |
-| GET    | `/books/v1/{id}` | Buscar por ID |
-| PUT    | `/books/v1/{id}` | Atualizar     |
-| DELETE | `/books/v1/{id}` | Deletar       |
+| Método | Endpoint             | Descrição     |
+| ------ |----------------------| ------------- |
+| POST   | `/api/books/v1`      | Criar livro   |
+| GET    | `/api/books/v1/{id}` | Buscar por ID |
+| PUT    | `/api/books/v1/{id}` | Atualizar     |
+| DELETE | `/api/books/v1/{id}` | Deletar       |
 
 ---
 ## 📑 Documentação da API (Swagger)
@@ -97,7 +97,7 @@ Após subir a aplicação, acesse:
 ## ▶️ Como executar o projeto
 
 ### Pré-requisitos
-- Java 25
+- Java 21
 - Maven
 - MySQL
 ---
