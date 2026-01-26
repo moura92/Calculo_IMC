@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.moura.dto.UsuarioDTO;
-import com.moura.services.UsuarioServices;
+import com.moura.unittests.services.UsuarioServices;
 
 @RestController
 @RequestMapping("/api/usuario/v1")

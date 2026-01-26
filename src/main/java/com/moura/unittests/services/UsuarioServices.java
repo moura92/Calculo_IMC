@@ -1,4 +1,4 @@
-package com.moura.services;
+package com.moura.unittests.services;
 
 import com.moura.controllers.UsuarioControllers;
 import com.moura.dto.UsuarioDTO;

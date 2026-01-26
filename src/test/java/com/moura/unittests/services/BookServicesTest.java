@@ -1,11 +1,11 @@
-package com.moura.services;
+package com.moura.unittests.services;
 
 import com.moura.dto.BookDTO;
 import com.moura.exception.ParametroInvalidoException;
 import com.moura.mapper.BookMapper;
 import com.moura.model.Book;
 import com.moura.repository.BookRepository;
-import com.moura.tests.mapper.mocks.MockBook;
+import com.moura.unittests.mapper.mocks.MockBook;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

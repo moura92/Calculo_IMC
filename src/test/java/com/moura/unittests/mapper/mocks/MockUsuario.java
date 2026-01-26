@@ -1,4 +1,4 @@
-package com.moura.tests.mapper.mocks;
+package com.moura.unittests.mapper.mocks;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,11 @@
-package com.moura.services;
+package com.moura.unittests.services;
 
 import com.moura.dto.UsuarioDTO;
 import com.moura.exception.ObjetoNuloException;
 import com.moura.mapper.UsuarioMapper;
 import com.moura.model.Usuario;
 import com.moura.repository.UsuarioRepository;
-import com.moura.tests.mapper.mocks.MockUsuario;
+import com.moura.unittests.mapper.mocks.MockUsuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

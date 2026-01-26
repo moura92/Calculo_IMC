@@ -1,4 +1,4 @@
-package com.moura.tests.mapper;
+package com.moura.unittests.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -11,7 +11,7 @@ import org.mapstruct.factory.Mappers;
 import com.moura.dto.UsuarioDTO;
 import com.moura.mapper.UsuarioMapper;
 import com.moura.model.Usuario;
-import com.moura.tests.mapper.mocks.MockUsuario;
+import com.moura.unittests.mapper.mocks.MockUsuario;
 
 public class UsuarioMapperTests {
 

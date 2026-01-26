@@ -8,7 +8,7 @@ Projeto criado com foco em **boas práticas**, **arquitetura REST**, **documenta
 
 ## 🚀 Tecnologias utilizadas
 
-- Java 25
+- Java 21
 - Spring Boot 3.5.9
 - Spring Web (MVC)
 - Spring Data JPA
