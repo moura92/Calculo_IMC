@@ -5,6 +5,7 @@ import com.moura.exception.ObjetoNuloException;
 import com.moura.mapper.UsuarioMapper;
 import com.moura.model.Usuario;
 import com.moura.repository.UsuarioRepository;
+import com.moura.services.UsuarioServices;
 import com.moura.unittests.mapper.mocks.MockUsuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -5,6 +5,7 @@ import com.moura.exception.ParametroInvalidoException;
 import com.moura.mapper.BookMapper;
 import com.moura.model.Book;
 import com.moura.repository.BookRepository;
+import com.moura.services.BookServices;
 import com.moura.unittests.mapper.mocks.MockBook;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
