@@ -36,6 +36,8 @@ public class Usuario implements Serializable {
 	private BigDecimal imc;
 	@Column(name = "Classificacao_IMC", length = 30)
 	private String classificacao;
+	@Column(name = "enabled", nullable = false)
+	private Boolean enabled;
 
 	public void calculoImc() {
 		if (peso == null || altura == null || peso <= 0.0 || altura <= 0.0) {
@@ -121,30 +123,22 @@ public class Usuario implements Serializable {
 		return imc;
 	}
 
-
 	public String getClassificacao() {
 		return classificacao;
 	}
 
+	public Boolean getEnabled() {return enabled;}
+	public void setEnabled(Boolean enabled) {this.enabled = enabled;}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || getClass() != o.getClass()) return false;
+		Usuario usuario = (Usuario) o;
+		return Objects.equals(id, usuario.id) && Objects.equals(nome, usuario.nome) && Objects.equals(idade, usuario.idade) && Objects.equals(altura, usuario.altura) && Objects.equals(peso, usuario.peso) && Objects.equals(imc, usuario.imc) && Objects.equals(classificacao, usuario.classificacao) && Objects.equals(enabled, usuario.enabled);
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(altura, classificacao, id, idade, imc, nome, peso);
+		return Objects.hash(id, nome, idade, altura, peso, imc, classificacao, enabled);
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Usuario other = (Usuario) obj;
-		return Objects.equals(altura, other.altura) && Objects.equals(classificacao, other.classificacao)
-				&& Objects.equals(id, other.id) && Objects.equals(idade, other.idade) && Objects.equals(imc, other.imc)
-				&& Objects.equals(nome, other.nome) && Objects.equals(peso, other.peso);
-	}
-
-
-
 }

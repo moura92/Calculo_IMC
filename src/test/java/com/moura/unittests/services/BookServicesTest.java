@@ -7,6 +7,7 @@ import com.moura.model.Book;
 import com.moura.repository.BookRepository;
 import com.moura.services.BookServices;
 import com.moura.unittests.mapper.mocks.MockBook;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,7 +40,8 @@ class BookServicesTest {
      */
 
     @Test
-    void findById() {///deve Busca rBook Por Id Com Sucesso()
+    @DisplayName("Deve Buscar Book por ID")
+    void findById() {///deve Busca Book Por Id Com Sucesso()
         Book book = new Book();
         book.setId(1L);
         book.setAuthor("TESTE de mock, BOOK.");

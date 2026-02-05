@@ -43,4 +43,8 @@ public interface UsuarioControllersDocs {
             summary = "Deletar"
             ,description = "ATENÇÃO! esta ação apaga um usuario para sempre no banco de dados")
     ResponseEntity<Void> delete(@PathVariable Long id);
+
+    @Operation(summary = "Usuario desabilitado"
+            ,description = "Digite o ID do usuario que deseja desabilitar")
+    UsuarioDTO disableUsuario(@PathVariable("id") Long id);
 }

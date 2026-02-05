@@ -26,6 +26,7 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 	UsuarioServices usuarioService;
 
 	// http://localhost:8080/api/usuario/v1
+	@CrossOrigin(origins = "http://www.testcors.com.br")
 	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@Override
 	public List<UsuarioDTO> findAll() {
@@ -42,7 +43,7 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 	@Override
 	public UsuarioDTO findById(@PathVariable("id") Long id) {
         var usuario = usuarioService.findById(id);
-        usuario.setData(new Date());
+       // usuario.setData(new Date());
         return usuario;
 	}
 
@@ -62,6 +63,13 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 		return usuarioService.update(usuarioDTO);
 	}
 
+	// PATCH
+	@PatchMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@Override
+	public UsuarioDTO disableUsuario(@PathVariable("id") Long id){
+		return usuarioService.disableUsuario(id);
+	}
+
 	// DELETE retorna 204 No Content (Forma correta para o DELETE)
 	@DeleteMapping("/{id}")
 	@Override
@@ -69,6 +77,8 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 		usuarioService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
+
+
 
 //DELETE retorna 200 (não é o ideal)
 //@DeleteMapping("/{id}")

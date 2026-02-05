@@ -7,11 +7,13 @@ import com.moura.exception.ParametroInvalidoException;
 import com.moura.mapper.UsuarioMapper;
 import com.moura.model.Usuario;
 import com.moura.repository.UsuarioRepository;
+import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -24,7 +26,7 @@ public class UsuarioServices {
 	@Autowired
 	UsuarioMapper usuarioMapper;
 
-	private Logger logger = Logger.getLogger(UsuarioServices.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(UsuarioServices.class);
 	/*
 	 * Um logger é uma ferramenta usada em aplicações Java (e praticamente toda
 	 * linguagem) para registrar mensagens, como: - erros - avisos - informações
@@ -45,7 +47,7 @@ public class UsuarioServices {
 	}
 
 	public UsuarioDTO findById(Long id) {
-		logger.info("Usuario encontrado pelo ID " + id);
+		logger.info("Usuario encontrado pelo ID: {} ", id);
 		Usuario usuario = repository.findById(id)
 				.orElseThrow(() -> new ParametroInvalidoException("Nenhum registro encotrando para este ID"));
 		var dto = usuarioMapper.toDTO(usuario);
@@ -91,18 +93,38 @@ public class UsuarioServices {
 
 	public void delete(Long id) {
 		logger.info("Usuario deletado!");
-
 		Usuario entidade = repository.findById(id)
 				.orElseThrow(() -> new ParametroInvalidoException("Nenhum registro encontrado para este ID"));
-
 		repository.delete(entidade);
 
 	}
+
+	@Transactional
+	public UsuarioDTO disableUsuario(Long id) {
+
+		repository.desativarUsuarios(id);
+
+		var usuario = repository.findById(id)
+				.orElseThrow(() -> new ParametroInvalidoException("Nenhum registro encontrado para este ID"));
+
+		//usuario.setEnabled(false);
+
+		logger.info("Usuario Desativado com sucesso. ID: {} | enabled: {}",
+				usuario.getId(), usuario.getEnabled());
+
+
+		var convertDTO = usuarioMapper.toDTO(usuario);
+		addHateoasLinks(convertDTO);
+
+		return convertDTO;
+	}
+
     private void addHateoasLinks(UsuarioDTO dto) {
         dto.add(linkTo(methodOn(UsuarioControllers.class).findAll()).withRel("findAll").withType("GET"));
         dto.add(linkTo(methodOn(UsuarioControllers.class).findById(dto.getId())).withSelfRel().withType("GET"));
         dto.add(linkTo(methodOn(UsuarioControllers.class).create(dto)).withRel("create").withType("POST"));
         dto.add(linkTo(methodOn(UsuarioControllers.class).update(dto.getId(), dto)).withRel("update").withType("PUT"));
-        dto.add(linkTo(methodOn(UsuarioControllers.class).delete(dto.getId())).withRel("detele").withType("DELETE"));
+		dto.add(linkTo(methodOn(UsuarioControllers.class).disableUsuario(dto.getId())).withRel("disable").withType("PATCH"));
+        dto.add(linkTo(methodOn(UsuarioControllers.class).delete(dto.getId())).withRel("delete").withType("DELETE"));
     }
 }

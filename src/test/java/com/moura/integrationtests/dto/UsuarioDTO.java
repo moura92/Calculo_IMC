@@ -22,6 +22,7 @@ public class UsuarioDTO implements Serializable {
 	private BigDecimal imc;
     @JsonProperty("classificacao_IMC")
 	private String classificacao;
+	private Boolean enabled;
     @JsonFormat(pattern = "dd/MM/yyyy")
     private Date data;
 
@@ -50,14 +51,18 @@ public class UsuarioDTO implements Serializable {
     public Date getData() {return data;}
     public void setData(Date data) {this.data = data;}
 
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof UsuarioDTO that)) return false;
-        return Objects.equals(getId(), that.getId()) && Objects.equals(getNome(), that.getNome()) && Objects.equals(getIdade(), that.getIdade()) && Objects.equals(getAltura(), that.getAltura()) && Objects.equals(getPeso(), that.getPeso()) && Objects.equals(getImc(), that.getImc()) && Objects.equals(getClassificacao(), that.getClassificacao()) && Objects.equals(getData(), that.getData());
-    }
+	public Boolean getEnabled() {return enabled;}
+	public void setEnabled(Boolean enabled) {this.enabled = enabled;}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getNome(), getIdade(), getAltura(), getPeso(), getImc(), getClassificacao(), getData());
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || getClass() != o.getClass()) return false;
+		UsuarioDTO that = (UsuarioDTO) o;
+		return Objects.equals(id, that.id) && Objects.equals(nome, that.nome) && Objects.equals(idade, that.idade) && Objects.equals(altura, that.altura) && Objects.equals(peso, that.peso) && Objects.equals(imc, that.imc) && Objects.equals(classificacao, that.classificacao) && Objects.equals(enabled, that.enabled) && Objects.equals(data, that.data);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, nome, idade, altura, peso, imc, classificacao, enabled, data);
+	}
 }

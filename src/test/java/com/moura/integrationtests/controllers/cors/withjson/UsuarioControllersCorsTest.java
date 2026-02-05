@@ -1,4 +1,4 @@
-package com.moura.integrationtests.controllers.withjson;
+package com.moura.integrationtests.controllers.cors.withjson;
 
 import com.moura.config.TestConfigs;
 import com.moura.integrationtests.dto.UsuarioDTO;
@@ -12,8 +12,8 @@ import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.DeserializationFeature;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UsuarioControllersTest extends AbstractIntegrationTest {
+class UsuarioControllersCorsTest extends AbstractIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -72,6 +72,7 @@ class UsuarioControllersTest extends AbstractIntegrationTest {
         assertNotNull(createdUsuario.getPeso());
         assertNotNull(createdUsuario.getAltura());
 
+
         // Verifica se o ID é maior que zero
         assertTrue(createdUsuario.getId() > 0);
 
@@ -79,6 +80,7 @@ class UsuarioControllersTest extends AbstractIntegrationTest {
         assertEquals(39, createdUsuario.getIdade());
         assertEquals(76, createdUsuario.getPeso());
         assertEquals(1.69, createdUsuario.getAltura());
+        assertTrue(createdUsuario.getEnabled());
 
     }
 
@@ -148,6 +150,7 @@ class UsuarioControllersTest extends AbstractIntegrationTest {
         assertEquals(39, createdUsuario.getIdade());
         assertEquals(76, createdUsuario.getPeso());
         assertEquals(1.69, createdUsuario.getAltura());
+        assertTrue(createdUsuario.getEnabled());
     }
 
 
@@ -182,5 +185,6 @@ class UsuarioControllersTest extends AbstractIntegrationTest {
         usuarioDTO.setIdade(39);
         usuarioDTO.setPeso(76);
         usuarioDTO.setAltura(1.69);
+        usuarioDTO.setEnabled(true);
     }
 }
