@@ -11,6 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -18,7 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 
-@Slf4j
+//@Slf4j
 @Service
 public class BookServices {
 
@@ -27,15 +32,20 @@ public class BookServices {
     BookRepository bookRepository;
     @Autowired
     BookMapper bookMapper;
+    @Autowired
+    PagedResourcesAssembler<BookDTO> assembler;
 
-    public List<BookDTO> findAll(){
+    public PagedModel<EntityModel<BookDTO>> findAll(Pageable pageable){
         log.info("Buscando lista de livros");
 
-        return bookRepository.findAll()
-                .stream()
-                .map(bookMapper::toDTO)
-                .peek(this::addHateoasLinks)
-                .toList();
+        var pagebooks = bookRepository.findAll(pageable);
+
+        var linksBook = pagebooks.map(book -> {
+            var dto = bookMapper.toDTO(book);
+            addHateoasLinks(dto);
+            return  dto;
+        });
+        return assembler.toModel(linksBook);
     }
 
     public BookDTO findById(Long id){
@@ -86,7 +96,7 @@ public class BookServices {
     }
 
     private void addHateoasLinks(BookDTO dto){
-        dto.add(linkTo(methodOn(BookControllers.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(BookControllers.class).findAll(1, 10, "asc")).withRel("findAll").withType("GET"));
         dto.add(linkTo(methodOn(BookControllers.class).findById(dto.getId())).withSelfRel().withType("GET"));
         dto.add(linkTo(methodOn(BookControllers.class).create(dto)).withRel("create").withType("POST"));
         dto.add(linkTo(methodOn(BookControllers.class).update(dto.getId(), dto)).withRel("update").withType("PUT"));

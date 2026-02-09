@@ -11,22 +11,27 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
 public class UsuarioServices {
+	private static final Logger logger = LoggerFactory.getLogger(UsuarioServices.class);
 
 	@Autowired
 	UsuarioRepository repository;
 	@Autowired
 	UsuarioMapper usuarioMapper;
-
-	private static final Logger logger = LoggerFactory.getLogger(UsuarioServices.class);
+	@Autowired
+	PagedResourcesAssembler<UsuarioDTO>  assembler;
 	/*
 	 * Um logger é uma ferramenta usada em aplicações Java (e praticamente toda
 	 * linguagem) para registrar mensagens, como: - erros - avisos - informações
@@ -35,15 +40,46 @@ public class UsuarioServices {
 	 * substituindo System.out.println, com níveis, filtros e arquivos de log.
 	 */
 
-	public List<UsuarioDTO> findAll() {
+	public PagedModel<EntityModel<UsuarioDTO>> findAll(Pageable pageable) {
 		logger.info("Buscando Lista de Usuarios");
 
-		var usuarios =  repository.findAll()
-                .stream()
-                .map(usuarioMapper::toDTO)
-                .toList();
-        usuarios.forEach(this::addHateoasLinks);
-        return usuarios;
+		var usuarioPage = repository.findAll(pageable);
+
+		var usuarioLinks = usuarioPage.map(usuario -> {
+			var dto = usuarioMapper.toDTO(usuario);
+			addHateoasLinks(dto);
+			return dto;
+		});
+
+		Link findAllLink = WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder.methodOn(UsuarioControllers.class)
+						.findAll(
+								pageable.getPageNumber(),
+								pageable.getPageSize(),
+								String.valueOf(pageable.getSort())))
+				.withSelfRel();
+        return assembler.toModel(usuarioLinks, findAllLink);
+	}
+
+	public PagedModel<EntityModel<UsuarioDTO>> nomeContainingIgnoreCase(String nome, Pageable pageable) {
+		logger.info("Buscando Usuario pelo nome");
+
+		var usuarioPage = repository.nomeContainingIgnoreCase(nome, pageable);
+
+		var usuarioLinks = usuarioPage.map(usuario -> {
+			var dto = usuarioMapper.toDTO(usuario);
+			addHateoasLinks(dto);
+			return dto;
+		});
+
+		Link findAllLink = WebMvcLinkBuilder.linkTo(
+				WebMvcLinkBuilder.methodOn(UsuarioControllers.class)
+						.findAll(
+								pageable.getPageNumber(),
+								pageable.getPageSize(),
+								String.valueOf(pageable.getSort())))
+				.withSelfRel();
+        return assembler.toModel(usuarioLinks, findAllLink);
 	}
 
 	public UsuarioDTO findById(Long id) {
@@ -102,7 +138,7 @@ public class UsuarioServices {
 	@Transactional
 	public UsuarioDTO disableUsuario(Long id) {
 
-		repository.desativarUsuarios(id);
+		repository.desativarUsuario(id);
 
 		var usuario = repository.findById(id)
 				.orElseThrow(() -> new ParametroInvalidoException("Nenhum registro encontrado para este ID"));
@@ -120,7 +156,7 @@ public class UsuarioServices {
 	}
 
     private void addHateoasLinks(UsuarioDTO dto) {
-        dto.add(linkTo(methodOn(UsuarioControllers.class).findAll()).withRel("findAll").withType("GET"));
+        dto.add(linkTo(methodOn(UsuarioControllers.class).findAll(1, 12, "asc")).withRel("findAll").withType("GET"));
         dto.add(linkTo(methodOn(UsuarioControllers.class).findById(dto.getId())).withSelfRel().withType("GET"));
         dto.add(linkTo(methodOn(UsuarioControllers.class).create(dto)).withRel("create").withType("POST"));
         dto.add(linkTo(methodOn(UsuarioControllers.class).update(dto.getId(), dto)).withRel("update").withType("PUT"));

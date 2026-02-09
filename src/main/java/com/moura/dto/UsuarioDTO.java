@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @JsonPropertyOrder({"id" , "nome", "idade", "peso", "altura", "imc", "classificacao_IMC", "enabled"})
+@Relation(collectionRelation = "lista de usuarios") // Altetra o nome De: usuarioDTOList Para: usuarios
 public class UsuarioDTO extends RepresentationModel<UsuarioDTO> implements Serializable {
 
 	private static final long serialVersionUID = 1L;

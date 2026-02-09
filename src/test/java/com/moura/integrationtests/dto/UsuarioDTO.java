@@ -3,6 +3,7 @@ package com.moura.integrationtests.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @JsonPropertyOrder({"id" , "nome", "idade", "peso", "altura", "imc", "classificacao_IMC", "data"})
+@XmlRootElement
 public class UsuarioDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
