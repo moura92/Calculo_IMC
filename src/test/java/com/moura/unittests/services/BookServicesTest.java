@@ -7,12 +7,17 @@ import com.moura.model.Book;
 import com.moura.repository.BookRepository;
 import com.moura.services.BookServices;
 import com.moura.unittests.mapper.mocks.MockBook;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,9 +32,10 @@ class BookServicesTest {
 
     @Mock
     BookRepository bookRepository;
-
     @Mock
     BookMapper bookMapper;
+    @Mock
+    private PagedResourcesAssembler<BookDTO> assembler;
 
     @InjectMocks
     BookServices bookServices;
@@ -107,9 +113,35 @@ class BookServicesTest {
         /// Cria a lista de DTOs correspondente à lista de entidades
         List<BookDTO> bookDTOList = mockBook.bookDTOList();
 
+        Pageable pageable = PageRequest.of(
+                0
+                ,10,
+                Sort.by("title")
+        );
         /// Define o comportamento do repository:
         /// Quando o metodo findAll() for chamado, ele deve retornar a lista fake de books
-        when(bookRepository.findAll()).thenReturn(bookList);
+        when(bookRepository
+                .findAll(any(Pageable.class)))
+                .thenReturn(new PageImpl<>(bookList));
+
+        when(assembler.toModel(any(Page.class)))
+                .thenAnswer(invocation -> {
+                    Page<BookDTO> page = invocation.getArgument(0);
+
+                    var content = page.getContent()
+                            .stream()
+                            .map(EntityModel::of)
+                            .toList();
+
+                    return PagedModel.of(
+                            content,
+                            new PagedModel.PageMetadata(
+                                    page.getSize(),
+                                    page.getNumber(),
+                                    page.getTotalElements()
+                            )
+                    );
+                });
 
         /// Define o comportamento do mapper:
         /// Para cada Book da lista, o mapper deve converter para BookDTO
@@ -118,23 +150,39 @@ class BookServicesTest {
         }
 
         /// Executa o metodo que está sendo testado
-        var resultado = bookServices.findAll();
+        var resultado = bookServices.findAll(pageable);
 
         /// Verifica se o resultado não é nulo
         assertNotNull(resultado);
 
         /// Verifica se a quantidade retornada é a esperada
-        assertEquals(bookList.size(),resultado.size());
+        assertEquals(bookList.size(),resultado.getContent().size());
 
         /// Verifica alguns dados para garantir que o mapeamento funcionou
-        assertEquals("Author Test 0", resultado.get(0).getAuthor());
-        assertEquals("Author Test 13", resultado.get(13).getAuthor());
+        assertEquals("Author Test 0",
+                resultado
+                        .getContent()
+                        .stream()
+                        .toList()
+                        .get(0)
+                        .getContent()
+                        .getAuthor());
+        assertEquals("Author Test 13",
+                resultado
+                        .getContent()
+                        .stream()
+                        .toList()
+                        .get(13)
+                        .getContent()
+                        .getAuthor());
 
         /// Verifica se o repository foi chamado exatamente uma vez
-        verify(bookRepository).findAll();
+        verify(bookRepository).findAll(any(Pageable.class));
 
         /// Verifica se o mapper foi chamado para cada entidade da lista
         verify(bookMapper, times(bookList.size())).toDTO(any(Book.class));
+
+        verify(assembler).toModel(any(Page.class));
     }
 
     @Test
