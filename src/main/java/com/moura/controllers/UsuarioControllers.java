@@ -26,9 +26,12 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 	@Autowired
 	UsuarioServices usuarioService;
 
+	// FIND ALL
 	// http://localhost:8080/api/usuario/v1
 	@CrossOrigin(origins = "http://www.testcors.com.br")
-	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@GetMapping(produces = {
+			MediaType.APPLICATION_JSON_VALUE,
+			MediaType.APPLICATION_XML_VALUE})
 	@Override
 	public ResponseEntity<PagedModel<EntityModel<UsuarioDTO>>> findAll(
 			@RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -41,12 +44,13 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 		return ResponseEntity.ok(usuarioService.findAll(pageable));
 	}
 
+	// FIND BY NOME
 	@CrossOrigin(origins = "http://www.testcors.com.br")
 	@GetMapping(
 			value = "/nomeContainingIgnoreCase/{nome}",
 			produces = {
-							MediaType.APPLICATION_JSON_VALUE,
-							MediaType.APPLICATION_XML_VALUE})
+					MediaType.APPLICATION_JSON_VALUE,
+					MediaType.APPLICATION_XML_VALUE})
 	@Override
 	public ResponseEntity<PagedModel<EntityModel<UsuarioDTO>>> nomeContainingIgnoreCase(
 			@PathVariable("nome") String nome,
@@ -60,6 +64,7 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 		return ResponseEntity.ok(usuarioService.nomeContainingIgnoreCase(nome, pageable));
 	}
 
+	// FIND BY ID
 	// http://localhost:8080/api/usuario/v1/1
 	//@CrossOrigin( // Só permite acessar por esses enderenço:
 	//		origins = {"http://localhost:8080",
@@ -94,6 +99,7 @@ public class UsuarioControllers implements UsuarioControllersDocs {
 	@PatchMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	@Override
 	public UsuarioDTO disableUsuario(@PathVariable("id") Long id){
+
 		return usuarioService.disableUsuario(id);
 	}
 

@@ -1,11 +1,10 @@
 package com.moura.integrationtests.controllers.withXml;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.moura.config.TestConfigs;
 import com.moura.integrationtests.dto.UsuarioDTO;
+import com.moura.integrationtests.dto.wrappers.xml.WrappersUsuarioDTOXml;
 import com.moura.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -223,6 +222,7 @@ class UsuarioControllersXmlTest extends AbstractIntegrationTest {
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_XML_VALUE)
                 .accept(MediaType.APPLICATION_XML_VALUE)
+                .queryParams("page", 1, "size", 2, "direction", "asc")
                 .when()
                 .get()
                 .then()
@@ -232,18 +232,19 @@ class UsuarioControllersXmlTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        List<UsuarioDTO> listaUsuario = objectMapper.readValue(content, new TypeReference<List<UsuarioDTO>>() {});
+        WrappersUsuarioDTOXml wrapperUsuarioDTO = objectMapper.readValue(content, WrappersUsuarioDTOXml.class);
+        List<UsuarioDTO> listaUsuario = wrapperUsuarioDTO.getContent();
 
         UsuarioDTO usuarioOne = listaUsuario.get(0);
         assertNotNull(usuarioOne.getId());
         // Verifica se o ID é maior que zero
         assertTrue(usuarioOne.getId() > 0);
 
-        assertEquals("Alisson", usuarioOne.getNome());
-        assertEquals(33, usuarioOne.getIdade());
-        assertEquals(78, usuarioOne.getPeso());
-        assertEquals(1.72, usuarioOne.getAltura());
-        assertTrue(usuarioOne.getEnabled());
+        assertEquals("Adara", usuarioOne.getNome());
+        assertEquals(59, usuarioOne.getIdade());
+        assertEquals(74.5, usuarioOne.getPeso());
+        assertEquals(1.85, usuarioOne.getAltura());
+        assertFalse(usuarioOne.getEnabled());
 
 
         UsuarioDTO usuarioTwo = listaUsuario.get(1);
@@ -251,10 +252,10 @@ class UsuarioControllersXmlTest extends AbstractIntegrationTest {
         // Verifica se o ID é maior que zero
         assertTrue(usuarioTwo.getId() > 0);
 
-        assertEquals("Moura", usuarioTwo.getNome());
-        assertEquals(33, usuarioTwo.getIdade());
-        assertEquals(75, usuarioTwo.getPeso());
-        assertEquals(1.91, usuarioTwo.getAltura());
+        assertEquals("Ade", usuarioTwo.getNome());
+        assertEquals(43, usuarioTwo.getIdade());
+        assertEquals(72.6, usuarioTwo.getPeso());
+        assertEquals(1.46, usuarioTwo.getAltura());
         assertTrue(usuarioTwo.getEnabled());
     }
 

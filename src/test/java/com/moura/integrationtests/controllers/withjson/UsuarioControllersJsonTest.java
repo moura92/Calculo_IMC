@@ -1,10 +1,10 @@
 package com.moura.integrationtests.controllers.withjson;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moura.config.TestConfigs;
 import com.moura.integrationtests.dto.UsuarioDTO;
+import com.moura.integrationtests.dto.wrappers.json.WrapperUsuarioDTOJson;
 import com.moura.integrationtests.testcontainers.AbstractIntegrationTest;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
@@ -22,8 +22,8 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) //"Sobe o servidor web em uma porta aleatória"
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class) // Os testes vão rodar na ordem definida por @Order
 class UsuarioControllersJsonTest extends AbstractIntegrationTest {
 
     @LocalServerPort
@@ -40,6 +40,7 @@ class UsuarioControllersJsonTest extends AbstractIntegrationTest {
 
         usuarioDTO = new UsuarioDTO();
     }
+
     @Test
     @Order(1)
     void createTest() throws IOException {
@@ -51,20 +52,20 @@ class UsuarioControllersJsonTest extends AbstractIntegrationTest {
                 .addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_MOURA)
 
                 //.addFilter(new RequestLoggingFilter(LogDetail.ALL))
-                  //  .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
+                //  .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .build();
 
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .body(usuarioDTO)
+                .body(usuarioDTO)
                 .when()
-                    .post()
+                .post()
                 .then()
-                    .statusCode(201)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .statusCode(201)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .extract()
-                    .body()
-                        .asString();
+                .body()
+                .asString();
         UsuarioDTO createdUsuario = objectMapper.readValue(content, UsuarioDTO.class);
         usuarioDTO = createdUsuario;
 
@@ -82,20 +83,20 @@ class UsuarioControllersJsonTest extends AbstractIntegrationTest {
 
     @Test
     @Order(2)
-    void  updateTest() throws IOException {
+    void updateTest() throws IOException {
         usuarioDTO.setNome("Moura Arruda");
 
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .body(usuarioDTO)
+                .body(usuarioDTO)
                 .when()
-                    .put("{id}", usuarioDTO.getId())
+                .put("{id}", usuarioDTO.getId())
                 .then()
-                    .statusCode(200)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .statusCode(200)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .extract()
-                    .body()
-                        .asString();
+                .body()
+                .asString();
         UsuarioDTO createdUsuario = objectMapper.readValue(content, UsuarioDTO.class);
         usuarioDTO = createdUsuario;
 
@@ -119,13 +120,13 @@ class UsuarioControllersJsonTest extends AbstractIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .pathParam("id", usuarioDTO.getId())
                 .when()
-                    .get("{id}")
+                .get("{id}")
                 .then()
-                    .statusCode(200)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .statusCode(200)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .extract()
-                    .body()
-                        .asString();
+                .body()
+                .asString();
 
         UsuarioDTO createdUsuario = objectMapper.readValue(content, UsuarioDTO.class);
         usuarioDTO = createdUsuario;
@@ -147,16 +148,16 @@ class UsuarioControllersJsonTest extends AbstractIntegrationTest {
     void disableTest() throws IOException {
 
         var content = given(specification)
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .pathParam("id", usuarioDTO.getId())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .pathParam("id", usuarioDTO.getId())
                 .when()
-                    .patch("{id}")
+                .patch("{id}")
                 .then()
-                    .statusCode(200)
+                .statusCode(200)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .extract()
-                    .body()
-                        .asString();
+                .body()
+                .asString();
 
         UsuarioDTO createdUsuario = objectMapper.readValue(content, UsuarioDTO.class);
         usuarioDTO = createdUsuario;
@@ -178,11 +179,11 @@ class UsuarioControllersJsonTest extends AbstractIntegrationTest {
     void deleteTest() throws IOException {
 
         given(specification)
-                    .pathParam("id", usuarioDTO.getId())
+                .pathParam("id", usuarioDTO.getId())
                 .when()
-                    .delete("{id}")
+                .delete("{id}")
                 .then()
-                    .statusCode(204);
+                .statusCode(204);
     }
 
     @Test
@@ -217,6 +218,7 @@ class UsuarioControllersJsonTest extends AbstractIntegrationTest {
 
         var content = given(specification)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .queryParams("page", 1, "size", 2, "direction", "asc")
                 .when()
                 .get()
                 .then()
@@ -226,18 +228,19 @@ class UsuarioControllersJsonTest extends AbstractIntegrationTest {
                 .body()
                 .asString();
 
-        List<UsuarioDTO> listaUsuario = objectMapper.readValue(content, new TypeReference<List<UsuarioDTO>>() {});
+        WrapperUsuarioDTOJson wrapperUsuarioDTOJson = objectMapper.readValue(content, WrapperUsuarioDTOJson.class);
+        List<UsuarioDTO> listaUsuario = wrapperUsuarioDTOJson.getEmbeddedDTO().getListaDeUsuarios();
 
         UsuarioDTO usuarioOne = listaUsuario.get(0);
         assertNotNull(usuarioOne.getId());
         // Verifica se o ID é maior que zero
         assertTrue(usuarioOne.getId() > 0);
 
-        assertEquals("Alisson", usuarioOne.getNome());
-        assertEquals(33, usuarioOne.getIdade());
-        assertEquals(78, usuarioOne.getPeso());
-        assertEquals(1.72, usuarioOne.getAltura());
-        assertTrue(usuarioOne.getEnabled());
+        assertEquals("Adara", usuarioOne.getNome());
+        assertEquals(59, usuarioOne.getIdade());
+        assertEquals(74.5, usuarioOne.getPeso());
+        assertEquals(1.85, usuarioOne.getAltura());
+        assertFalse(usuarioOne.getEnabled());
 
 
         UsuarioDTO usuarioTwo = listaUsuario.get(1);
@@ -245,10 +248,55 @@ class UsuarioControllersJsonTest extends AbstractIntegrationTest {
         // Verifica se o ID é maior que zero
         assertTrue(usuarioTwo.getId() > 0);
 
-        assertEquals("Moura", usuarioTwo.getNome());
+        assertEquals("Ade", usuarioTwo.getNome());
+        assertEquals(43, usuarioTwo.getIdade());
+        assertEquals(72.6, usuarioTwo.getPeso());
+        assertEquals(1.46, usuarioTwo.getAltura());
+        assertTrue(usuarioTwo.getEnabled());
+    }
+
+    @Test
+    @Order(8)
+    void nomeContainingIgnoreCaseTest() throws IOException {
+
+        // {{baseUrl}}/api/usuario/v1/nomeContainingIgnoreCase/ali?page=1&size=2&direction=asc
+        var content = given(specification)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .pathParam("nome", "ali")
+                .queryParams("page", 1, "size", 2, "direction", "asc")
+                .when()
+                .get("nomeContainingIgnoreCase/{nome}")
+                .then()
+                .statusCode(200)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .extract()
+                .body()
+                .asString();
+
+        WrapperUsuarioDTOJson wrapperUsuarioDTOJson = objectMapper.readValue(content, WrapperUsuarioDTOJson.class);
+        List<UsuarioDTO> listaUsuario = wrapperUsuarioDTOJson.getEmbeddedDTO().getListaDeUsuarios();
+
+        UsuarioDTO usuarioOne = listaUsuario.get(0);
+        assertNotNull(usuarioOne.getId());
+        // Verifica se o ID é maior que zero
+        assertTrue(usuarioOne.getId() > 0);
+
+        assertEquals("Alisha", usuarioOne.getNome());
+        assertEquals(20, usuarioOne.getIdade());
+        assertEquals(99.0, usuarioOne.getPeso());
+        assertEquals(2.0, usuarioOne.getAltura());
+        assertFalse(usuarioOne.getEnabled());
+
+
+        UsuarioDTO usuarioTwo = listaUsuario.get(1);
+        assertNotNull(usuarioTwo.getId());
+        // Verifica se o ID é maior que zero
+        assertTrue(usuarioTwo.getId() > 0);
+
+        assertEquals("Alisson", usuarioTwo.getNome());
         assertEquals(33, usuarioTwo.getIdade());
-        assertEquals(75, usuarioTwo.getPeso());
-        assertEquals(1.91, usuarioTwo.getAltura());
+        assertEquals(78.0, usuarioTwo.getPeso());
+        assertEquals(1.72, usuarioTwo.getAltura());
         assertTrue(usuarioTwo.getEnabled());
     }
 

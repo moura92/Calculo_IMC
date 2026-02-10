@@ -8,14 +8,17 @@ import com.moura.repository.UsuarioRepository;
 import com.moura.services.UsuarioServices;
 import com.moura.unittests.mapper.mocks.MockUsuario;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +38,10 @@ class UsuarioServicesTest {
     UsuarioRepository repository;
 
     @Mock
-    UsuarioMapper usuarioMapper;
+    UsuarioMapper dto;
+
+    @Mock
+    private PagedResourcesAssembler<UsuarioDTO> assembler;
 
     @BeforeEach
     void setUp() {
@@ -52,7 +58,7 @@ class UsuarioServicesTest {
         when(repository.findById(1L))
                 .thenReturn(Optional.of(usuario));
 
-        when(usuarioMapper.toDTO(usuario))
+        when(dto.toDTO(usuario))
                 .thenReturn(input.mockDTO(1));
 
         var resultado = services.findById(1L);
@@ -108,11 +114,11 @@ class UsuarioServicesTest {
 
         UsuarioDTO dto = input.mockDTO(1);
 
-        when(usuarioMapper.toEntity(dto)).thenReturn(usuario);
+        when(this.dto.toEntity(dto)).thenReturn(usuario);
 
         when(repository.save(usuario)).thenReturn(persisted);
 
-        when(usuarioMapper.toDTO(persisted)).thenReturn(input.mockDTO(1));
+        when(this.dto.toDTO(persisted)).thenReturn(input.mockDTO(1));
 
         var resultado = services.create(dto);
 
@@ -186,7 +192,7 @@ class UsuarioServicesTest {
 
         when(repository.save(entity)).thenReturn(entity);
 
-        when(usuarioMapper.toDTO(entity)).thenReturn(input.mockDTO(1));
+        when(this.dto.toDTO(entity)).thenReturn(input.mockDTO(1));
 
         var resultado = services.update(dto);
 
@@ -261,12 +267,14 @@ class UsuarioServicesTest {
     }
 
     @Test
-    @Disabled("Reason: Still Under Development")
     void findAll() {
-        List<Usuario> list = input.mockEntityList();
-        when(repository.findAll()).thenReturn(list);
+        Pageable pageable = PageRequest.of(0,5, Sort.by("nome").ascending());
 
-        when(usuarioMapper.toDTO(any(Usuario.class)))
+        List<Usuario> list = input.mockEntityList();
+        Page<Usuario> page = new PageImpl<>(list, pageable, list.size());
+        when(repository.findAll(pageable)).thenReturn(page);
+
+        when(dto.toDTO(any(Usuario.class)))
                 .thenAnswer(invocation -> {
                     Usuario usuario = invocation.getArgument(0);
 
@@ -275,102 +283,67 @@ class UsuarioServicesTest {
                     dto.setNome(usuario.getNome());
                     dto.setPeso(usuario.getPeso());
                     dto.setAltura(usuario.getAltura());
-
                     return dto;
                 });
 
-        List<UsuarioDTO> usuarios = new ArrayList<>();//services.findAll(pageable);
+        when(assembler.toModel(any(Page.class), any(Link.class)))
+                .thenAnswer(invocation -> {
+                    Page<UsuarioDTO> dtoPage = invocation.getArgument(0);
+                    return PagedModel.of(
+                            dtoPage.map(EntityModel::of).toList(),
+                            new PagedModel.PageMetadata(
+                                    dtoPage.getSize(),
+                                    dtoPage.getNumber(),
+                                    dtoPage.getTotalElements()
+                            )
+                    );
+                });
 
-        assertNotNull(usuarios);
-        assertEquals(14,usuarios.size());
+        PagedModel<EntityModel<UsuarioDTO>> resultado = services.findAll(pageable);
 
-        var usuario1 = usuarios.get(1);
-        assertNotNull(usuario1);
-        assertNotNull(usuario1.getId());
-        assertNotNull(usuario1.getLinks());
+        assertNotNull(services);
+        assertEquals(14, resultado.getContent().size());
 
-        assertNotNull(usuario1.getLinks().stream()
+        EntityModel<UsuarioDTO> entity = resultado.getContent().iterator().next();
+        UsuarioDTO dto = entity.getContent();
+
+        assertNotNull(dto);
+        assertNotNull(dto.getId());
+        assertNotNull(dto.getLinks());
+
+        assertNotNull(dto.getLinks().stream()
                 .anyMatch(link -> link.getRel().value().equals("self")
                         && link.getHref().endsWith("/api/usuario/v1/1")
                         && link.getType().equals("GET")
                 )
         );
 
-        assertNotNull(usuario1.getLinks().stream()
+        assertNotNull(dto.getLinks().stream()
                 .anyMatch(link -> link.getRel().value().equals("findAll")
                         && link.getHref().endsWith("/api/usuario/v1")
                         && link.getType().equals("GET")
                 )
         );
 
-        assertNotNull(usuario1.getLinks().stream()
+        assertNotNull(dto.getLinks().stream()
                 .anyMatch(link -> link.getRel().value().equals("create")
                         && link.getHref().endsWith("/api/usuario/v1")
                         && link.getType().equals("POST")
                 )
         );
 
-        assertNotNull(usuario1.getLinks().stream()
+        assertNotNull(dto.getLinks().stream()
                 .anyMatch(link -> link.getRel().value().equals("update")
                         && link.getHref().endsWith("/api/usuario/v1")
                         && link.getType().equals("PUT")
                 )
         );
 
-        assertNotNull(usuario1.getLinks().stream()
+        assertNotNull(dto.getLinks().stream()
                 .anyMatch(link -> link.getRel().value().equals("delete")
                         && link.getHref().endsWith("/api/usuario/v1/1")
                         && link.getType().equals("DELETE")
                 )
         );
-
-        assertEquals("Usuario Teste 1", usuario1.getNome());
-        assertEquals(71.0, usuario1.getPeso());
-        assertEquals(1.71, usuario1.getAltura());
-
-
-        var usuario4 = usuarios.get(4);
-        assertNotNull(usuario4);
-        assertNotNull(usuario4.getId());
-        assertNotNull(usuario4.getLinks());
-
-        assertNotNull(usuario4.getLinks().stream()
-                .anyMatch(link -> link.getRel().value().equals("self")
-                        && link.getHref().endsWith("/api/usuario/v1/4")
-                        && link.getType().equals("GET")
-                )
-        );
-
-        assertNotNull(usuario4.getLinks().stream()
-                .anyMatch(link -> link.getRel().value().equals("findAll")
-                        && link.getHref().endsWith("/api/usuario/v1")
-                        && link.getType().equals("GET")
-                )
-        );
-
-        assertNotNull(usuario4.getLinks().stream()
-                .anyMatch(link -> link.getRel().value().equals("create")
-                        && link.getHref().endsWith("/api/usuario/v1")
-                        && link.getType().equals("POST")
-                )
-        );
-
-        assertNotNull(usuario4.getLinks().stream()
-                .anyMatch(link -> link.getRel().value().equals("update")
-                        && link.getHref().endsWith("/api/usuario/v1")
-                        && link.getType().equals("PUT")
-                )
-        );
-
-        assertNotNull(usuario4.getLinks().stream()
-                .anyMatch(link -> link.getRel().value().equals("delete")
-                        && link.getHref().endsWith("/api/usuario/v1/4")
-                        && link.getType().equals("DELETE")
-                )
-        );
-
-        assertEquals("Usuario Teste 4", usuario4.getNome());
-        assertEquals(74.0, usuario4.getPeso());
-        assertEquals(1.74, usuario4.getAltura());
     }
 }
