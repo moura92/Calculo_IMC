@@ -1,5 +1,7 @@
 cors.originPatterns=http://localhost:8080,http://localhost:3000,http://www.moura.com.br
 
+file.upload-dir=/Meu Drive/DEV/UploadDir
+
 spring.application.name=calculimc
 
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
@@ -7,6 +9,11 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.jpa.hibernate.ddl-auto=validate
 spring.jpa.show-sql=true
 spring.jpa.open-in-view=false
+
+spring.servlet.multipart.enabled=true
+spring.servlet.multipart.file-size-threshold=2KB
+spring.servlet.multipart.max-file-size=200MB
+spring.servlet.multipart.max-request-size=251MB
 
 spring.flyway.enabled=true
 spring.flyway.locations=classpath:db/migration
