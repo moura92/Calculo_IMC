@@ -1,6 +1,5 @@
 package com.moura.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.hateoas.RepresentationModel;
@@ -8,7 +7,6 @@ import org.springframework.hateoas.server.core.Relation;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Objects;
 
 @JsonPropertyOrder({"id" , "nome", "idade", "peso", "altura", "imc", "classificacao_IMC", "enabled"})
@@ -36,8 +34,8 @@ public class UsuarioDTO extends RepresentationModel<UsuarioDTO> implements Seria
 	public String getNome() {return nome;}
 	public void setNome(String nome) {this.nome = nome;}
 
-	public int getIdade() {return idade;}
-	public void setIdade(int idade) {this.idade = idade;}
+	public Integer getIdade() {return idade;}
+	public void setIdade(Integer idade) {this.idade = idade;}
 
 	public double getAltura() {return altura;}
 	public void setAltura(double altura) {this.altura = altura;}

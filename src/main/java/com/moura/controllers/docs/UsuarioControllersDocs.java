@@ -3,10 +3,15 @@ package com.moura.controllers.docs;
 import com.moura.dto.UsuarioDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.core.io.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 //Documentar SWAGGER
 @Tag(name = "Usuario")
@@ -19,8 +24,23 @@ public interface UsuarioControllersDocs {
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "12") Integer size,
             @RequestParam(value = "direction", defaultValue = "asc") String direction
-
     );
+
+    // http://localhost:8080/api/v1/usuario
+    @Operation(summary = "Exportação de usuarios"
+                ,description = "Mostra a Lista de Usuarios em XLSX e CSV")
+    ResponseEntity<Resource> exportPage(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "size", defaultValue = "12") Integer size,
+            @RequestParam(value = "direction", defaultValue = "asc") String direction,
+            HttpServletRequest request
+    );
+
+    // http://localhost:8080/api/v1/usuario
+    @Operation(summary = "Planilha de usuario"
+            ,description = "Mostra a planilha de usuario com XLSX ou CSV")
+    ResponseEntity<List<UsuarioDTO>> planilhaUsuario(MultipartFile file);
+
 
     @Operation(summary = "Lista de Usuarios por nome"
                 ,description = "Mostra a Lista de Usuarios cadastrados pelo nome")
@@ -29,7 +49,6 @@ public interface UsuarioControllersDocs {
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "12") Integer size,
             @RequestParam(value = "direction", defaultValue = "asc") String direction
-
     );
 
     // http://localhost:8080/api/v1/usuario/1

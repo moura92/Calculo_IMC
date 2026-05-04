@@ -82,7 +82,6 @@ public class Usuario implements Serializable {
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -90,7 +89,6 @@ public class Usuario implements Serializable {
 	public String getNome() {
 		return nome;
 	}
-
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
@@ -98,15 +96,13 @@ public class Usuario implements Serializable {
 	public int getIdade() {
 		return idade;
 	}
-
-	public void setIdade(int idade) {
+	public void setIdade(Integer idade) {
 		this.idade = idade;
 	}
 
 	public double getAltura() {
 		return altura;
 	}
-
 	public void setAltura(double altura) {
 		this.altura = altura;
 	}
@@ -114,7 +110,6 @@ public class Usuario implements Serializable {
 	public double getPeso() {
 		return peso;
 	}
-
 	public void setPeso(double peso) {
 		this.peso = peso;
 	}
@@ -122,7 +117,9 @@ public class Usuario implements Serializable {
 	public BigDecimal getImc() {
 		return imc;
 	}
+	public void setImc(BigDecimal imc) {this.imc = imc;}
 
+	public void setClassificacao(String classificacao) {this.classificacao = classificacao;}
 	public String getClassificacao() {
 		return classificacao;
 	}
